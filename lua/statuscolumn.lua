@@ -1,14 +1,19 @@
+local column = require("statuscolumn.column")
+
 local statuscolumn = {}
 
 local function with_defaults(options)
   return {
-    default_config = options.default_config or false,
+    default_config = options.default_config or true,
   }
 end
 
 function statuscolumn.setup(options)
   statuscolumn.options = with_defaults(options)
-  vim.api.nvim_create_user_command("SGreet", statuscolumn.greet, {})
+  statuscolumn.init = column.bootstrap
+
+  vim.opt.relativenumber = true
+  vim.o.statuscolumn = "%!v:lua.require('statuscolumn').init()"
 end
 
 function statuscolumn.is_configured()

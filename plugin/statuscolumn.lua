@@ -14,4 +14,4 @@ vim.g.loaded_statuscolumn = 1
 -- Be careful to not overuse this file!
 local statuscolumn = require("statuscolumn")
 
-vim.api.nvim_create_user_command("STest", statuscolumn.test_msg, {})
+vim.api.nvim_create_user_command("SColumnTest", statuscolumn.test_msg, {})
