@@ -24,17 +24,24 @@ end
 
 function colors.gradient_two_steps(start_hex, end_hex)
   assert(is_valid_hex(start_hex) and is_valid_hex(end_hex), "Invalid hex color")
-
   local start_r, start_g, start_b = hex_to_rgb(start_hex)
   local end_r, end_g, end_b = hex_to_rgb(end_hex)
 
-  local step_r = (end_r - start_r) / 3
-  local step_g = (end_g - start_g) / 3
-  local step_b = (end_b - start_b) / 3
+  -- Adjust these factors to control how close the colors are to the end
+  local factor1 = 0.6
+  local factor2 = 0.8
 
-  local color1 = rgb_to_hex(math.floor(start_r + step_r), math.floor(start_g + step_g), math.floor(start_b + step_b))
+  local color1 = rgb_to_hex(
+    math.floor(start_r + (end_r - start_r) * factor1),
+    math.floor(start_g + (end_g - start_g) * factor1),
+    math.floor(start_b + (end_b - start_b) * factor1)
+  )
 
-  local color2 = rgb_to_hex(math.floor(end_r - step_r), math.floor(end_g - step_g), math.floor(end_b - step_b))
+  local color2 = rgb_to_hex(
+    math.floor(start_r + (end_r - start_r) * factor2),
+    math.floor(start_g + (end_g - start_g) * factor2),
+    math.floor(start_b + (end_b - start_b) * factor2)
+  )
 
   return {
     closer_to_start = color1,
