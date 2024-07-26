@@ -4,24 +4,32 @@ local statuscolumn = {}
 
 local function defaults(options)
   return {
+    enable_border = options.enable_border or false,
     gradient_hl = options.gradient_hl or "Constant",
   }
 end
 
 function statuscolumn.setup(options)
   statuscolumn.options = defaults(options)
-  statuscolumn.init = column.bootstrap
+
   colors.init(statuscolumn.options.gradient_hl)
 
-  local augroup = vim.api.nvim_create_augroup("StatusColumn", { clear = true })
+  statuscolumn.init_lnum = function()
+    return column.bootstrap_lnum(statuscolumn.options)
+  end
 
+  statuscolumn.init_relnum = function()
+    return column.bootstrap_relnum(statuscolumn.options)
+  end
+
+  local augroup = vim.api.nvim_create_augroup("StatusColumn", { clear = true })
   vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
     group = augroup,
     callback = function(ev)
       local bufnr = ev.buf
       if vim.bo[bufnr].buftype == "" and vim.bo[bufnr].filetype ~= "" then
         vim.opt_local.relativenumber = true
-        vim.opt_local.statuscolumn = "%!v:lua.require('statuscolumn').init()"
+        vim.opt_local.statuscolumn = "%!v:lua.require('statuscolumn').init_lnum()"
       else
         vim.opt_local.statuscolumn = ""
       end

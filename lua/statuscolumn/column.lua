@@ -1,6 +1,6 @@
 local column = {}
 
-column.linenumber = function()
+column.lnum = function()
   if vim.v.relnum == 2 then
     return "%#ColumnTertiary#" .. vim.v.lnum
   end
@@ -8,9 +8,22 @@ column.linenumber = function()
     return "%#ColumnSecondary#" .. vim.v.lnum
   end
   if vim.v.relnum == 0 then
-    return "%#ColumnCurrent#" .. vim.v.lnum
+    return " " .. "%#ColumnCurrent#" .. vim.v.lnum
   end
   return "%#ColumnDim#" .. vim.v.lnum
+end
+
+column.relnum = function()
+  if vim.v.relnum == 2 then
+    return "%#ColumnTertiary#" .. vim.v.relnum
+  end
+  if vim.v.relnum == 1 then
+    return "%#ColumnSecondary#" .. vim.v.relnum
+  end
+  if vim.v.relnum == 0 then
+    return " " .. "%#ColumnCurrent#" .. vim.v.lnum
+  end
+  return "%#ColumnDim#" .. vim.v.relnum
 end
 
 column.border = function()
@@ -26,10 +39,27 @@ column.border = function()
   return "%#ColumnDim#🭰"
 end
 
-column.bootstrap = function()
+column.bootstrap_lnum = function(options)
   local result = ""
 
-  result = column.linenumber() .. " " .. column.border()
+  if not options.enable_border then
+    result = column.lnum() .. " "
+  else
+    result = column.lnum() .. " " .. column.border()
+  end
+
+  return "%s%=" .. result
+end
+
+column.bootstrap_relnum = function(options)
+  local result = ""
+
+  if not options.enable_border then
+    result = column.relnum() .. " "
+  else
+    result = column.relnum() .. " " .. column.border()
+  end
+
   return "%s%=" .. result
 end
 

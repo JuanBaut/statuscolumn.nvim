@@ -4,13 +4,18 @@ local function is_valid_hex(hex)
   return hex:match("^#%x%x%x%x%x%x$") ~= nil
 end
 
-function colors.highlight(name)
-  local hl = vim.api.nvim_get_hl(0, { name = name })
-  if hl.fg then
-    local hex_color = string.format("#%06x", hl.fg)
-    return hex_color
+function colors.highlight(name, option)
+  if type(name) ~= "string" or (option ~= "fg" and option ~= "bg") then
+    error("Invalid arguments. Usage: highlight(name: string, option: 'fg' | 'bg')")
   end
-  return nil
+  local hl = vim.api.nvim_get_hl(0, { name = name })
+  local color = hl[option]
+  if not color then
+    print("No " .. option .. " color found for highlight group: " .. name)
+    return nil
+  end
+  local hex_color = string.format("#%06x", color)
+  return hex_color
 end
 
 local function hex_to_rgb(hex)
@@ -28,7 +33,7 @@ function colors.gradient_two_steps(start_hex, end_hex)
   local end_r, end_g, end_b = hex_to_rgb(end_hex)
 
   -- Adjust these factors to control how close the colors are to the end
-  local factor1 = 0.6
+  local factor1 = 0.8
   local factor2 = 0.8
 
   local color1 = rgb_to_hex(
@@ -50,8 +55,8 @@ function colors.gradient_two_steps(start_hex, end_hex)
 end
 
 function colors.init(hl)
-  local start_color = colors.highlight(hl) or "#65bcff"
-  local end_color = colors.highlight("SignColumn") or "#3b4261"
+  local start_color = colors.highlight(hl, "fg") or "#65bcff"
+  local end_color = colors.highlight("SignColumn", "fg") or "#3b4261"
 
   local gradient = colors.gradient_two_steps(start_color, end_color)
   local light_color = gradient.closer_to_start
