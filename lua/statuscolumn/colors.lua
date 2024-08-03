@@ -33,8 +33,8 @@ function colors.gradient_two_steps(start_hex, end_hex)
   local end_r, end_g, end_b = hex_to_rgb(end_hex)
 
   -- Adjust these factors to control how close the colors are to the end
-  local factor1 = 0.8
-  local factor2 = 0.8
+  local factor1 = 0.6
+  local factor2 = 0.9
 
   local color1 = rgb_to_hex(
     math.floor(start_r + (end_r - start_r) * factor1),
@@ -49,23 +49,29 @@ function colors.gradient_two_steps(start_hex, end_hex)
   )
 
   return {
-    closer_to_start = color1,
-    closer_to_end = color2,
+    dark = color1,
+    light = color2,
   }
 end
 
 function colors.init(hl)
-  local start_color = colors.highlight(hl, "fg") or "#65bcff"
-  local end_color = colors.highlight("SignColumn", "fg") or "#3b4261"
+  local primary = colors.highlight(hl, "fg") or "#65bcff"
+  local secondary = colors.highlight("SignColumn", "fg") or "#3b4261"
+  local background = colors.highlight("StatusLine", "bg") or "#131621"
 
-  local gradient = colors.gradient_two_steps(start_color, end_color)
-  local light_color = gradient.closer_to_start
-  local dark_color = gradient.closer_to_end
+  local numbers = colors.gradient_two_steps(primary, secondary)
+  local border = colors.gradient_two_steps(primary, background)
 
-  vim.api.nvim_set_hl(0, "ColumnCurrent", { fg = start_color })
-  vim.api.nvim_set_hl(0, "ColumnSecondary", { fg = light_color })
-  vim.api.nvim_set_hl(0, "ColumnTertiary", { fg = dark_color })
-  vim.api.nvim_set_hl(0, "ColumnDim", { fg = end_color })
+  vim.api.nvim_set_hl(0, "ColumnBase0", { fg = secondary })
+  vim.api.nvim_set_hl(0, "ColumnBase1", { fg = background })
+
+  vim.api.nvim_set_hl(0, "Column0", { fg = primary })
+  vim.api.nvim_set_hl(0, "Column1", { fg = numbers.dark })
+  vim.api.nvim_set_hl(0, "Column2", { fg = numbers.light })
+
+  vim.api.nvim_set_hl(0, "ColumnBorder0", { fg = primary })
+  vim.api.nvim_set_hl(0, "ColumnBorder1", { fg = border.dark })
+  vim.api.nvim_set_hl(0, "ColumnBorder2", { fg = border.light })
 end
 
 return colors
